@@ -1,4 +1,4 @@
-// src/app/modules/room/room.interface.ts
+
 export interface IRoom {
     name: string;
     roomNo: number;
