@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { createRoom } from './room.service';
+import { RoomServices } from './room.service';
 
-export const addRoom = async (req: Request, res: Response) => {
+const addRoom = async (req: Request, res: Response) => {
     try {
-        const room = await createRoom(req.body);
+        const room = await RoomServices.createRoom(req.body);
         res.status(200).json({
             success: true,
             statusCode: 200,
@@ -18,4 +18,28 @@ export const addRoom = async (req: Request, res: Response) => {
             error: error.message
         });
     }
+};
+
+const getRoom = async (req: Request, res: Response) => {
+    try {
+        const room = await RoomServices.getRoomById(req.params.id);
+        res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Room retrieved successfully',
+            data: room
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            statusCode: 500,
+            message: 'Error retrieving room',
+            error: error.message
+        });
+    }
+};
+
+export const RoomControllers = {
+    addRoom,
+    getRoom
 };
