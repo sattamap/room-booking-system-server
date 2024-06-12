@@ -39,8 +39,23 @@ const getAllRooms = async () => {
     }
 };
 
+const updateRoomById = async (roomId: string, updateData: Partial<IRoom>) => {
+    try {
+        const updatedRoom = await RoomModel.findByIdAndUpdate(roomId, updateData, { new: true });
+        if (!updatedRoom) {
+            throw new Error('Room not found');
+        }
+        const roomObject = updatedRoom.toObject();
+        const { _id, name, roomNo, floorNo, capacity, pricePerSlot, amenities, isDeleted } = roomObject;
+        return { _id, name, roomNo, floorNo, capacity, pricePerSlot, amenities, isDeleted };
+    } catch (error: any) {
+        throw new Error(`Unable to update room: ${error.message}`);
+    }
+};
+
 export const RoomServices = {
     createRoom,
     getRoomById,
-    getAllRooms
+    getAllRooms,
+    updateRoomById
 };
