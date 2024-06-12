@@ -8,5 +8,7 @@ const router = express.Router();
 router.post('/rooms', RoomControllers.addRoom); 
 // Route for retrieving a room by ID
 router.get('/rooms/:id', RoomControllers.getRoom);
+// Route for retrieving all rooms
+router.get('/rooms', RoomControllers.getAllRooms);
 
 export const roomRoutes = router;
