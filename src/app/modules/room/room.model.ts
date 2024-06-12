@@ -1,4 +1,3 @@
-// src/app/modules/room/room.model.ts
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { IRoom } from './room.interface';
 
