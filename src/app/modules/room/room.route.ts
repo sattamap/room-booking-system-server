@@ -12,5 +12,7 @@ router.get('/rooms/:id', RoomControllers.getRoom);
 router.get('/rooms', RoomControllers.getAllRooms);
 // Route for updating a room by ID
 router.put('/rooms/:id', RoomControllers.updateRoom);
+// Route for deleting (soft deleting) a room by ID
+router.delete('/rooms/:id', RoomControllers.deleteRoom);
 
 export const roomRoutes = router;

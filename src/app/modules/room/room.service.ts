@@ -29,7 +29,7 @@ const getRoomById = async (roomId: string) => {
 
 const getAllRooms = async () => {
     try {
-        const rooms = await RoomModel.find({});
+        const rooms = await RoomModel.find({ isDeleted: false }); // Exclude deleted rooms
         return rooms.map(room => {
             const { _id, name, roomNo, floorNo, capacity, pricePerSlot, amenities, isDeleted } = room.toObject();
             return { _id, name, roomNo, floorNo, capacity, pricePerSlot, amenities, isDeleted };
@@ -53,9 +53,24 @@ const updateRoomById = async (roomId: string, updateData: Partial<IRoom>) => {
     }
 };
 
+const deleteRoomById = async (roomId: string) => {
+    try {
+        const deletedRoom = await RoomModel.findByIdAndUpdate(roomId, { isDeleted: true }, { new: true });
+        if (!deletedRoom) {
+            throw new Error('Room not found');
+        }
+        const roomObject = deletedRoom.toObject();
+        const { _id, name, roomNo, floorNo, capacity, pricePerSlot, amenities, isDeleted } = roomObject;
+        return { _id, name, roomNo, floorNo, capacity, pricePerSlot, amenities, isDeleted };
+    } catch (error: any) {
+        throw new Error(`Unable to delete room: ${error.message}`);
+    }
+};
+
 export const RoomServices = {
     createRoom,
     getRoomById,
     getAllRooms,
-    updateRoomById
+    updateRoomById,
+    deleteRoomById
 };
