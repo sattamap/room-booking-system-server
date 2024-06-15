@@ -6,14 +6,19 @@ type TResponse<T> = {
   success: boolean;
   message?: string;
   data: T;
+  token?: string;
 };
 
 const sendResponse = <T>(res: Response, data: TResponse<T>) => {
-  res.status(data?.statusCode).json({
+  const response = {
     success: data.success,
+    statusCode: data.statusCode,
     message: data.message,
+    ...data.token && { token: data.token }, // Conditionally include token if it exists
     data: data.data,
-  });
+  };
+
+  res.status(data.statusCode).json(response);
 };
 
 export default sendResponse;
