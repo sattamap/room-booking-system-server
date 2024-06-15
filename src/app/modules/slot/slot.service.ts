@@ -1,11 +1,11 @@
 import SlotModel from './slot.model';
 import { ISlot } from './slot.interface';
+import mongoose from 'mongoose';
 
-export const createSlots = async (slotData: ISlot) => {
+const createSlots = async (slotData: ISlot) => {
     const { room, date, startTime, endTime } = slotData;
     const slotDuration = 60; // in minutes
 
-    // Parse startTime and endTime into minutes
     const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
     const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
 
@@ -34,4 +34,26 @@ export const createSlots = async (slotData: ISlot) => {
     }
 
     return slots;
+};
+
+const getAvailableSlots = async (date?: string, roomId?: string) => {
+    const query: { date?: string; room?: mongoose.Types.ObjectId; isBooked: boolean } = {
+        isBooked: false
+    };
+
+    if (date) {
+        query.date = date;
+    }
+
+    if (roomId) {
+        query.room = new mongoose.Types.ObjectId(roomId);
+    }
+
+    const availableSlots = await SlotModel.find(query).populate('room').lean().exec();
+    return availableSlots;
+};
+
+export const SlotServices = {
+    createSlots,
+    getAvailableSlots
 };

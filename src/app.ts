@@ -21,6 +21,7 @@ app.use('/api', roomRoutes);
 // Use the slot routes
 app.use('/api', slotRoutes);
 
+
 // Welcome route
 app.get("/", (req: Request, res: Response) => {
     res.send("server is running!");
