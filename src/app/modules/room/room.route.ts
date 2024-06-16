@@ -10,10 +10,10 @@ const router = express.Router();
 router.post('/rooms', auth(USER_ROLE.admin), RoomControllers.addRoom); 
 
 // Route for retrieving a room by ID
-router.get('/rooms/:id', auth(USER_ROLE.admin, USER_ROLE.user), RoomControllers.getRoom);
+router.get('/rooms/:id', RoomControllers.getRoom);
 
 // Route for retrieving all rooms
-router.get('/rooms', auth(USER_ROLE.admin, USER_ROLE.user), RoomControllers.getAllRooms);
+router.get('/rooms', RoomControllers.getAllRooms);
 
 // Route for updating a room by ID (Admin only)
 router.put('/rooms/:id', auth(USER_ROLE.admin), RoomControllers.updateRoom);
