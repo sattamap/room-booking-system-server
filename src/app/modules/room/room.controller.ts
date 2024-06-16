@@ -1,105 +1,63 @@
 import { Request, Response } from 'express';
 import { RoomServices } from './room.service';
+import sendResponse from '../../utils/sendResponse';
+import catchAsync from '../../utils/catchAsync';
+import httpStatus from 'http-status';
 
-const addRoom = async (req: Request, res: Response) => {
-    try {
-        const room = await RoomServices.createRoom(req.body);
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: 'Room added successfully',
-            data: room
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            statusCode: 500,
-            message: 'Error adding room',
-            error: error.message
-        });
-    }
-};
+const addRoom = catchAsync(async (req: Request, res: Response) => {
+  const room = await RoomServices.createRoom(req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Room added successfully',
+    data: room
+  });
+});
 
-const getRoom = async (req: Request, res: Response) => {
-    try {
-        const room = await RoomServices.getRoomById(req.params.id);
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: 'Room retrieved successfully',
-            data: room
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            statusCode: 500,
-            message: 'Error retrieving room',
-            error: error.message
-        });
-    }
-};
+const getRoom = catchAsync(async (req: Request, res: Response) => {
+  const room = await RoomServices.getRoomById(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Room retrieved successfully',
+    data: room
+  });
+});
 
-const getAllRooms = async (req: Request, res: Response) => {
-    try {
-        const rooms = await RoomServices.getAllRooms();
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: 'Rooms retrieved successfully',
-            data: rooms
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            statusCode: 500,
-            message: 'Error retrieving rooms',
-            error: error.message
-        });
-    }
-};
+const getAllRooms = catchAsync(async (req: Request, res: Response) => {
+  const rooms = await RoomServices.getAllRooms();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Rooms retrieved successfully',
+    data: rooms
+  });
+});
 
-const updateRoom = async (req: Request, res: Response) => {
-    try {
-        const room = await RoomServices.updateRoomById(req.params.id, req.body);
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: 'Room updated successfully',
-            data: room
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            statusCode: 500,
-            message: 'Error updating room',
-            error: error.message
-        });
-    }
-};
+const updateRoom = catchAsync(async (req: Request, res: Response) => {
+  const room = await RoomServices.updateRoomById(req.params.id, req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Room updated successfully',
+    data: room
+  });
+});
 
-const deleteRoom = async (req: Request, res: Response) => {
-    try {
-        const room = await RoomServices.deleteRoomById(req.params.id);
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: 'Room deleted successfully',
-            data: room
-        });
-    } catch (error: any) {
-        res.status(500).json({
-            success: false,
-            statusCode: 500,
-            message: 'Error deleting room',
-            error: error.message
-        });
-    }
-};
+const deleteRoom = catchAsync(async (req: Request, res: Response) => {
+  const room = await RoomServices.deleteRoomById(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Room deleted successfully',
+    data: room
+  });
+});
 
 export const RoomControllers = {
-    addRoom,
-    getRoom,
-    getAllRooms,
-    updateRoom,
-    deleteRoom
+  addRoom,
+  getRoom,
+  getAllRooms,
+  updateRoom,
+  deleteRoom
 };
