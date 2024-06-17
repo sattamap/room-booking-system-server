@@ -1,6 +1,7 @@
 // src/app/modules/booking/booking.service.ts
 import BookingModel from './booking.model';
 import SlotModel from '../slot/slot.model';
+import RoomModel from '../room/room.model';  // Import the Room model
 import { IBooking } from './booking.interface';
 
 import mongoose from 'mongoose';
@@ -15,8 +16,14 @@ const createBooking = async (bookingData: IBooking, user: { _id: mongoose.Types.
         throw new AppError(400, 'One or more slots are already booked or do not exist');
     }
 
-    // Calculate the total amount (assuming price per slot is 100)
-    const totalAmount = foundSlots.length * 100;
+    // Fetch the room data to get the price per slot
+    const roomData = await RoomModel.findById(room);
+    if (!roomData) {
+        throw new AppError(404, 'Room not found');
+    }
+
+    // Calculate the total amount
+    const totalAmount = foundSlots.length * roomData.pricePerSlot;
 
     // Create the new booking
     const newBooking = new BookingModel({
