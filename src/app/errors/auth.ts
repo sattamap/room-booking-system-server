@@ -1,3 +1,4 @@
+// src/app/errors/auth.ts
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -6,6 +7,7 @@ import AppError from '../errors/AppError';
 import { TUserRole } from '../modules/user/user.interface';
 import catchAsync from '../utils/catchAsync';
 import UserModel from '../modules/user/user.model';
+import mongoose from 'mongoose';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -20,12 +22,17 @@ const auth = (...requiredRoles: TUserRole[]) => {
     const jwtToken = token.split(' ')[1];
 
     // Verify the given token
-    const decoded = jwt.verify(jwtToken, config.jwt_secret as string) as JwtPayload;
+    let decoded: JwtPayload ;
+    try {
+      decoded = jwt.verify(jwtToken, config.jwt_secret as string) as JwtPayload ;
+    } catch (error) {
+      return next(new AppError(httpStatus.UNAUTHORIZED, 'Invalid token.'));
+    }
 
-    const { role, userId } = decoded;
+    const { role } = decoded;
 
     // Check if the user exists
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(decoded.userId); // Assuming userId is the correct field name in UserModel
     if (!user) {
       return next(new AppError(httpStatus.NOT_FOUND, 'User not found.'));
     }
@@ -35,9 +42,16 @@ const auth = (...requiredRoles: TUserRole[]) => {
       return next(new AppError(httpStatus.FORBIDDEN, 'You do not have permission to access this resource.'));
     }
 
-    req.user = decoded;
+    // Attach user information to the request
+    req.user = { 
+      _id: user._id as mongoose.Types.ObjectId, // Ensure _id is of type ObjectId
+      ...decoded 
+    };
+
     next();
   });
 };
 
 export default auth;
+
+

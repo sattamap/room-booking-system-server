@@ -4,6 +4,7 @@ import { userRoutes } from './app/modules/user/user.route';
 import { roomRoutes } from './app/modules/room/room.route';
 import { slotRoutes } from './app/modules/slot/slot.route';
 import { authRoutes } from './app/modules/auth/auth.route';
+import { bookingRoutes } from './app/modules/booking/booking.router';
 
 
 const app: Application = express();
@@ -16,13 +17,15 @@ app.use(cors());
 // Register routes
 app.use('/api/auth', userRoutes);
 
-// Use the room routes
+//  room routes
 app.use('/api', roomRoutes);
 
-// Use the slot routes
+// slot routes
 app.use('/api', slotRoutes);
 // Routes
 app.use('/api/auth', authRoutes);
+//booking routes
+app.use('/api', bookingRoutes);
 
 
 // Welcome route
