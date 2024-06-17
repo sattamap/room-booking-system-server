@@ -1,9 +1,7 @@
-// src/app/modules/booking/booking.service.ts
 import BookingModel from './booking.model';
 import SlotModel from '../slot/slot.model';
-import RoomModel from '../room/room.model';  // Import the Room model
+import RoomModel from '../room/room.model';
 import { IBooking } from './booking.interface';
-
 import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
 
@@ -50,6 +48,58 @@ const createBooking = async (bookingData: IBooking, user: { _id: mongoose.Types.
     return savedBooking;
 };
 
+const getAllBookings = async () => {
+    const bookings = await BookingModel.find({ isDeleted: false }) // Exclude deleted bookings
+        .populate('room')
+        .populate('slots')
+        .populate('user')
+        .lean();
+    
+    return bookings;
+};
+
+const getUserBookings = async (userId: mongoose.Types.ObjectId) => {
+    const bookings = await BookingModel.find({ user: userId, isDeleted: false }) // Exclude deleted bookings
+        .populate('room')
+        .populate('slots')
+        .populate('user')
+        .lean();
+    
+    return bookings;
+};
+
+const updateBooking = async (bookingId: mongoose.Types.ObjectId, updateData: Partial<IBooking>) => {
+    const booking = await BookingModel.findByIdAndUpdate(bookingId, updateData, {
+        new: true,
+        runValidators: true
+    }).populate('room').populate('slots').populate('user');
+
+    if (!booking) {
+        throw new AppError(404, 'Booking not found');
+    }
+
+    return booking;
+};
+
+// New method to soft delete a booking
+const deleteBooking = async (bookingId: mongoose.Types.ObjectId) => {
+    const booking = await BookingModel.findByIdAndUpdate(
+        bookingId,
+        { isDeleted: true },
+        { new: true }
+    ).populate('room').populate('slots').populate('user');
+
+    if (!booking) {
+        throw new AppError(404, 'Booking not found');
+    }
+
+    return booking;
+};
+
 export const BookingServices = {
     createBooking,
+    getAllBookings,
+    getUserBookings,
+    updateBooking,
+    deleteBooking 
 };
