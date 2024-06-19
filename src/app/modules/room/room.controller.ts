@@ -1,8 +1,9 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { RoomServices } from './room.service';
 import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';
 import httpStatus from 'http-status';
+import AppError from '../../errors/AppError';
 
 const addRoom = catchAsync(async (req: Request, res: Response) => {
   const room = await RoomServices.createRoom(req.body);
@@ -54,10 +55,28 @@ const deleteRoom = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Error handler for handling AppError and other uncaught errors
+const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
+  if (error instanceof AppError) {
+    sendResponse(res, {
+      statusCode: error.statusCode,
+      success: false,
+      message: error.message
+    });
+  } else {
+    sendResponse(res, {
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      success: false,
+      message: 'Internal Server Error'
+    });
+  }
+};
+
 export const RoomControllers = {
   addRoom,
   getRoom,
   getAllRooms,
   updateRoom,
-  deleteRoom
+  deleteRoom,
+  errorHandler // Include the errorHandler in RoomControllers
 };

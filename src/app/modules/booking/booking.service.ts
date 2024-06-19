@@ -4,14 +4,16 @@ import RoomModel from '../room/room.model';
 import { IBooking } from './booking.interface';
 import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
+import NoDataFoundError from '../../errors/NotFoundError';
 
 const createBooking = async (bookingData: IBooking, user: { _id: mongoose.Types.ObjectId }) => {
     const { room, slots, date } = bookingData;
 
-    // Validate that slots exist and are available
-    const foundSlots = await SlotModel.find({ _id: { $in: slots }, isBooked: false });
+  
+    // Validate that slots exist and are available for the given date
+    const foundSlots = await SlotModel.find({ _id: { $in: slots }, isBooked: false, date });
     if (foundSlots.length !== slots.length) {
-        throw new AppError(400, 'One or more slots are already booked or do not exist');
+        throw new AppError(400, 'One or more slots are already booked, do not exist, or are not available on the specified date');
     }
 
     // Fetch the room data to get the price per slot
@@ -27,7 +29,7 @@ const createBooking = async (bookingData: IBooking, user: { _id: mongoose.Types.
     const newBooking = new BookingModel({
         room,
         slots,
-        user: user._id,
+        user: user._id,  // Always use authenticated user's ID
         date,
         totalAmount,
         isConfirmed: 'unconfirmed',
@@ -45,8 +47,13 @@ const createBooking = async (bookingData: IBooking, user: { _id: mongoose.Types.
         .populate('slots')
         .populate('user');
     
-    return savedBooking;
+    if (!savedBooking) {
+        throw new AppError(500, 'Failed to fetch saved booking details');
+    }
+
+    return savedBooking.toObject();
 };
+;
 
 const getAllBookings = async () => {
     const bookings = await BookingModel.find({ isDeleted: false }) // Exclude deleted bookings
@@ -55,6 +62,10 @@ const getAllBookings = async () => {
         .populate('user')
         .lean();
     
+    if (!bookings || bookings.length === 0) {
+        throw new NoDataFoundError('No bookings found');
+    }
+
     return bookings;
 };
 
@@ -65,10 +76,14 @@ const getUserBookings = async (userId: mongoose.Types.ObjectId) => {
         .populate('user')
         .lean();
     
+    if (!bookings || bookings.length === 0) {
+        throw new NoDataFoundError('No bookings found for the user');
+    }
+
     return bookings;
 };
 
-const updateBooking = async (bookingId: mongoose.Types.ObjectId, updateData: Partial<IBooking>) => {
+const updateBooking = async (bookingId: string, updateData: Partial<IBooking>) => {
     const booking = await BookingModel.findByIdAndUpdate(bookingId, updateData, {
         new: true,
         runValidators: true
@@ -78,11 +93,10 @@ const updateBooking = async (bookingId: mongoose.Types.ObjectId, updateData: Par
         throw new AppError(404, 'Booking not found');
     }
 
-    return booking;
+    return booking.toObject();
 };
 
-// New method to soft delete a booking
-const deleteBooking = async (bookingId: mongoose.Types.ObjectId) => {
+const deleteBooking = async (bookingId: string) => {
     const booking = await BookingModel.findByIdAndUpdate(
         bookingId,
         { isDeleted: true },
@@ -93,7 +107,7 @@ const deleteBooking = async (bookingId: mongoose.Types.ObjectId) => {
         throw new AppError(404, 'Booking not found');
     }
 
-    return booking;
+    return booking.toObject();
 };
 
 export const BookingServices = {
@@ -101,5 +115,5 @@ export const BookingServices = {
     getAllBookings,
     getUserBookings,
     updateBooking,
-    deleteBooking 
+    deleteBooking
 };

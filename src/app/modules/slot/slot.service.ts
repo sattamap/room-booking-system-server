@@ -1,59 +1,62 @@
 import SlotModel from './slot.model';
 import { ISlot } from './slot.interface';
 import mongoose from 'mongoose';
+import httpStatus from 'http-status';
+import { mapMongooseErrorToAppError } from '../../utils/errorMapper';
+import NoDataFoundError from '../../errors/NotFoundError';
 
 const createSlots = async (slotData: ISlot) => {
-    const { room, date, startTime, endTime } = slotData;
-    const slotDuration = 60; // in minutes
+  const { room, date, startTime, endTime } = slotData;
+  const slotDuration = 60; // in minutes
 
-    const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
-    const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
+  const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
+  const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
 
-    const totalDuration = endMinutes - startMinutes;
-    const numOfSlots = totalDuration / slotDuration;
+  const totalDuration = endMinutes - startMinutes;
+  const numOfSlots = totalDuration / slotDuration;
 
-    const slots = [];
+  const slots = [];
 
-    for (let i = 0; i < numOfSlots; i++) {
-        const slotStartMinutes = startMinutes + (i * slotDuration);
-        const slotEndMinutes = slotStartMinutes + slotDuration;
+  for (let i = 0; i < numOfSlots; i++) {
+    const slotStartMinutes = startMinutes + (i * slotDuration);
+    const slotEndMinutes = slotStartMinutes + slotDuration;
 
-        const slotStartTime = `${String(Math.floor(slotStartMinutes / 60)).padStart(2, '0')}:${String(slotStartMinutes % 60).padStart(2, '0')}`;
-        const slotEndTime = `${String(Math.floor(slotEndMinutes / 60)).padStart(2, '0')}:${String(slotEndMinutes % 60).padStart(2, '0')}`;
+    const slotStartTime = `${String(Math.floor(slotStartMinutes / 60)).padStart(2, '0')}:${String(slotStartMinutes % 60).padStart(2, '0')}`;
+    const slotEndTime = `${String(Math.floor(slotEndMinutes / 60)).padStart(2, '0')}:${String(slotEndMinutes % 60).padStart(2, '0')}`;
 
-        const newSlot = new SlotModel({
-            room,
-            date,
-            startTime: slotStartTime,
-            endTime: slotEndTime,
-            isBooked: false
-        });
+    const newSlot = new SlotModel({
+      room,
+      date,
+      startTime: slotStartTime,
+      endTime: slotEndTime,
+      isBooked: false
+    });
 
-        await newSlot.save();
-        slots.push(newSlot.toObject());
-    }
+ 
+      await newSlot.save();
+      slots.push(newSlot.toObject());
+  
+  }
 
-    return slots;
+  return slots;
 };
 
 const getAvailableSlots = async (date?: string, roomId?: string) => {
-    const query: { date?: string; room?: mongoose.Types.ObjectId; isBooked: boolean } = {
-        isBooked: false
-    };
+  const query: { date?: string; room?: mongoose.Types.ObjectId; isBooked: boolean } = { isBooked: false };
 
-    if (date) {
-        query.date = date;
-    }
+  if (date) query.date = date;
+  if (roomId) query.room = new mongoose.Types.ObjectId(roomId);
 
-    if (roomId) {
-        query.room = new mongoose.Types.ObjectId(roomId);
-    }
-
+  
     const availableSlots = await SlotModel.find(query).populate('room').lean().exec();
+    if (availableSlots.length === 0) {
+      throw new NoDataFoundError('No available slots found');
+    }
     return availableSlots;
+
 };
 
 export const SlotServices = {
-    createSlots,
-    getAvailableSlots
+  createSlots,
+  getAvailableSlots
 };

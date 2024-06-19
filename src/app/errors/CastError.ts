@@ -5,7 +5,7 @@ import AppError from './AppError';
 class CastError extends AppError {
   constructor(message: string, errorMessages: { path: string; message: string }[]) {
     super(400, message);
-    this.name = 'CastError';
+    this.name = 'MongoServerError';
     this.errorMessages = errorMessages;
   }
 }
