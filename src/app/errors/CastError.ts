@@ -1,10 +1,15 @@
-// src/app/errors/CastError.ts
+
+
 import AppError from './AppError';
 
 class CastError extends AppError {
-    constructor(message: string) {
-        super(400, message, false);
-    }
+  constructor(message: string, errorMessages: { path: string; message: string }[]) {
+    super(400, message);
+    this.name = 'CastError';
+    this.errorMessages = errorMessages;
+  }
 }
 
 export default CastError;
+
+  
