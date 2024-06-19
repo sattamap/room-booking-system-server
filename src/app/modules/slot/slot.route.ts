@@ -1,7 +1,8 @@
 import express from 'express';
 import { SlotControllers } from './slot.controller';
+import auth from '../../middlewares/auth';
 import { USER_ROLE } from '../user/user.constant';
-import auth from '../../errors/auth';
+
 
 const router = express.Router();
 

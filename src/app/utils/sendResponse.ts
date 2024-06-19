@@ -5,18 +5,24 @@ type TResponse<T> = {
   statusCode: number;
   success: boolean;
   message?: string;
-  data: T;
+  data?: T; // Make data optional
   token?: string;
 };
 
 const sendResponse = <T>(res: Response, data: TResponse<T>) => {
-  const response = {
+  const response: any = {
     success: data.success,
     statusCode: data.statusCode,
     message: data.message,
-    ...data.token && { token: data.token }, // Conditionally include token if it exists
-    data: data.data,
   };
+
+  if (data.data !== undefined) {
+    response.data = data.data;
+  }
+
+  if (data.token) {
+    response.token = data.token;
+  }
 
   res.status(data.statusCode).json(response);
 };

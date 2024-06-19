@@ -1,13 +1,15 @@
+// src/app/modules/booking/booking.controller.ts
+
 import { Request, Response, NextFunction } from 'express';
 import { BookingServices } from './booking.service';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
+import { checkDataExistence } from './booking.utils'; // Import the utility function
 
 const createBooking = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const booking = await BookingServices.createBooking(req.body, req.user);
-
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
@@ -16,19 +18,27 @@ const createBooking = catchAsync(async (req: Request, res: Response, next: NextF
     });
 });
 
-const getAllBookings = catchAsync(async (req: Request, res: Response) => {
-    const bookings = await BookingServices.getAllBookings();
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'All bookings retrieved successfully',
-        data: bookings,
-    });
+const getAllBookings = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const bookings = await BookingServices.getAllBookings();
+        checkDataExistence(bookings);
+        
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: 'All bookings retrieved successfully',
+            data: bookings,
+        });
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
+    }
 });
 
-const getUserBookings = catchAsync(async (req: Request, res: Response) => {
+const getUserBookings = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user._id;
     const bookings = await BookingServices.getUserBookings(userId);
+    checkDataExistence(bookings);
+    
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
@@ -37,28 +47,39 @@ const getUserBookings = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const updateBooking = catchAsync(async (req: Request, res: Response) => {
-    const bookingId = new mongoose.Types.ObjectId(req.params.id); // Convert bookingId to ObjectId
-    const updateData = req.body;
-    const updatedBooking = await BookingServices.updateBooking(bookingId, updateData);
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Booking updated successfully',
-        data: updatedBooking
-    });
+const updateBooking = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const bookingId = new mongoose.Types.ObjectId(req.params.id);
+        const updateData = req.body;
+        const updatedBooking = await BookingServices.updateBooking(bookingId, updateData);
+        checkDataExistence(updatedBooking);
+        
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: 'Booking updated successfully',
+            data: updatedBooking
+        });
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
+    }
 });
 
-// New controller method to soft delete a booking
-const deleteBooking = catchAsync(async (req: Request, res: Response) => {
-    const bookingId = new mongoose.Types.ObjectId(req.params.id); // Convert bookingId to ObjectId
-    const deletedBooking = await BookingServices.deleteBooking(bookingId);
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Booking deleted successfully',
-        data: deletedBooking
-    });
+const deleteBooking = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const bookingId = new mongoose.Types.ObjectId(req.params.id);
+        const deletedBooking = await BookingServices.deleteBooking(bookingId);
+        checkDataExistence(deletedBooking);
+        
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: 'Booking deleted successfully',
+            data: deletedBooking
+        });
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
+    }
 });
 
 export const BookingControllers = {
@@ -66,5 +87,5 @@ export const BookingControllers = {
     getAllBookings,
     getUserBookings,
     updateBooking,
-    deleteBooking 
+    deleteBooking
 };
