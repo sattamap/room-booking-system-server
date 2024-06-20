@@ -1,8 +1,6 @@
 import SlotModel from './slot.model';
 import { ISlot } from './slot.interface';
 import mongoose from 'mongoose';
-import httpStatus from 'http-status';
-import { mapMongooseErrorToAppError } from '../../utils/errorMapper';
 import NoDataFoundError from '../../errors/NotFoundError';
 
 const createSlots = async (slotData: ISlot) => {
