@@ -1,5 +1,4 @@
-
-
+// src/middlewares/errorHandler.ts
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import AppError from '../errors/AppError';
@@ -7,7 +6,9 @@ import DuplicateEntryError from '../errors/DuplicateEntryError';
 import ValidationError from '../errors/ValidationError';
 import CastError from '../errors/CastError';
 import NoDataFoundError from '../errors/NotFoundError';
-import UnauthorizedError from '../errors/UnauthorizedError'; // Import UnauthorizedError
+import UnauthorizedError from '../errors/UnauthorizedError';
+import ZodValidationError from '../errors/ZodValidationError';
+
 
 const baseErrorResponse = {
   success: false,
@@ -39,6 +40,15 @@ export const errorHandler = (
       success: false,
       statusCode: httpStatus.UNAUTHORIZED,
       message: err.message,
+    });
+  }
+
+  // Handle ZodValidationError specifically
+  if (err instanceof ZodValidationError) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      ...baseErrorResponse,
+      message: err.message,
+      errorMessages: err.errorMessages,
     });
   }
 
