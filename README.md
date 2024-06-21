@@ -79,7 +79,6 @@ npm run start:prod
 ### Project Structure
 ```bash
 room-booking-system-server/
-│
 ├── src/
 │   ├── app/
 │   │   ├── config/
@@ -92,13 +91,14 @@ room-booking-system-server/
 │   │   │   ├── room/
 │   │   │   ├── slot/
 │   │   │   └── user/
-│   │   ├── app.ts
-│   │   └── server.ts
-│   └── package.json
-│
-├── .env.example
+│   ├── app.ts
+│   └── server.ts
 ├── .gitignore
-└── README.md
+├── eslint.config.mjs
+├── package-lock.json
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
 
 ## Features
