@@ -1,10 +1,20 @@
+// src/services/slot.service.ts
 import SlotModel from './slot.model';
 import { ISlot } from './slot.interface';
 import mongoose from 'mongoose';
 import NoDataFoundError from '../../errors/NotFoundError';
+import RoomModel from '../room/room.model';
+import AppError from '../../errors/AppError';
 
 const createSlots = async (slotData: ISlot) => {
   const { room, date, startTime, endTime } = slotData;
+
+  // Check if the room exists
+  const existingRoom = await RoomModel.findById(room);
+  if (!existingRoom) {
+    throw new AppError(400, 'Room does not exist');
+  }
+
   const slotDuration = 60; // in minutes
 
   const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
@@ -30,10 +40,8 @@ const createSlots = async (slotData: ISlot) => {
       isBooked: false
     });
 
- 
-      await newSlot.save();
-      slots.push(newSlot.toObject());
-  
+    await newSlot.save();
+    slots.push(newSlot.toObject());
   }
 
   return slots;
@@ -45,13 +53,18 @@ const getAvailableSlots = async (date?: string, roomId?: string) => {
   if (date) query.date = date;
   if (roomId) query.room = new mongoose.Types.ObjectId(roomId);
 
-  
-    const availableSlots = await SlotModel.find(query).populate('room').lean().exec();
-    if (availableSlots.length === 0) {
-      throw new NoDataFoundError('No available slots found');
-    }
-    return availableSlots;
+  const availableSlots = await SlotModel.find(query)
+    .populate({
+      path: 'room',
+      select: '_id name roomNo floorNo capacity pricePerSlot amenities isDeleted'
+    })
+    .lean()
+    .exec();
 
+  if (availableSlots.length === 0) {
+    throw new NoDataFoundError('No available slots found');
+  }
+  return availableSlots;
 };
 
 export const SlotServices = {

@@ -1,4 +1,3 @@
-// src/errors/ZodError.ts
 import { ZodError } from 'zod';
 import AppError from './AppError';
 
@@ -9,7 +8,7 @@ class ZodValidationError extends AppError {
       path: issue.path.join('.'),
       message: issue.message,
     }));
-    super(400, 'Validation error', errorMessages);
+    super(400, 'Zod Validation error', errorMessages);
     this.name = 'ZodValidationError';
   }
 }

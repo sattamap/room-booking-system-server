@@ -16,9 +16,6 @@ export const createBookingSchema = z.object({
     slots: z.array(objectIdValidation),
     user: objectIdValidation,
     date: z.coerce.date(), // Converts string to date and validates
-    totalAmount: z.number().positive(), // Total amount must be a positive number
-    isConfirmed: z.enum(['confirmed', 'unconfirmed', 'canceled']).default('unconfirmed'),
-    isDeleted: z.boolean().optional().default(false),
   }),
 });
 
