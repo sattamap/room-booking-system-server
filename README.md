@@ -73,8 +73,8 @@ npm run build
 npm run start:prod
 ```
 **Access the application:**
-    - **Local Server:** Open your browser and go to `http://localhost:5000/`
-    - **Vercel Server:** Open your browser and go to [Express Server App on Vercel](https://room-booking-system-server.vercel.app/)
+   - **Local Server:** Open your browser and go to `http://localhost:5000/`
+   - **Vercel Server:** Open your browser and go to [Express Server App on Vercel](https://room-booking-system-server.vercel.app/)
 
 ### Project Structure
 ```bash
