@@ -1,12 +1,11 @@
-// src/app/modules/booking/booking.validation.ts
-import { z } from 'zod';
-import mongoose from 'mongoose';
+import { z } from "zod";
+import mongoose from "mongoose";
 
 // Helper to validate MongoDB ObjectId
 const objectIdValidation = z
   .string()
   .refine((id) => mongoose.Types.ObjectId.isValid(id), {
-    message: 'Invalid ObjectId format',
+    message: "Invalid ObjectId format",
   });
 
 // Schema for booking creation
@@ -27,7 +26,7 @@ export const updateBookingSchema = z.object({
     user: objectIdValidation.optional(),
     date: z.coerce.date().optional(),
     totalAmount: z.number().positive().optional(),
-    isConfirmed: z.enum(['confirmed', 'unconfirmed', 'canceled']).optional(),
+    isConfirmed: z.enum(["confirmed", "unconfirmed", "canceled"]).optional(),
     isDeleted: z.boolean().optional(),
   }),
 });

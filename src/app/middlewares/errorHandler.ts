@@ -1,25 +1,23 @@
-// src/middlewares/errorHandler.ts
-import { Request, Response, NextFunction } from 'express';
-import httpStatus from 'http-status';
-import AppError from '../errors/AppError';
-import DuplicateEntryError from '../errors/DuplicateEntryError';
-import ValidationError from '../errors/ValidationError';
-import CastError from '../errors/CastError';
-import NoDataFoundError from '../errors/NotFoundError';
-import UnauthorizedError from '../errors/UnauthorizedError';
-import ZodValidationError from '../errors/ZodValidationError';
-
+import { Request, Response, NextFunction } from "express";
+import httpStatus from "http-status";
+import AppError from "../errors/AppError";
+import DuplicateEntryError from "../errors/DuplicateEntryError";
+import ValidationError from "../errors/ValidationError";
+import CastError from "../errors/CastError";
+import NoDataFoundError from "../errors/NotFoundError";
+import UnauthorizedError from "../errors/UnauthorizedError";
+import ZodValidationError from "../errors/ZodValidationError";
 
 const baseErrorResponse = {
   success: false,
-  message: '',
+  message: "",
   errorMessages: [] as { path: string; message: string }[],
 };
 
 const baseNotFoundResponse = {
   success: false,
   statusCode: 404,
-  message: 'No Data Found',
+  message: "No Data Found",
   data: [],
 };
 
@@ -27,7 +25,7 @@ export const errorHandler = (
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // Handle NoDataFoundError
   if (err instanceof NoDataFoundError) {
@@ -57,8 +55,13 @@ export const errorHandler = (
     const response = {
       ...baseErrorResponse,
       message: err.message,
-      errorMessages: err.errorMessages.length ? err.errorMessages : [{ path: '', message: err.message }],
-      stack: process.env.NODE_ENV === 'development' ? `MongoServerError: ${err.message}` : undefined,
+      errorMessages: err.errorMessages.length
+        ? err.errorMessages
+        : [{ path: "", message: err.message }],
+      stack:
+        process.env.NODE_ENV === "development"
+          ? `MongoServerError: ${err.message}`
+          : undefined,
     };
 
     return res.status(err.statusCode).json(response);
@@ -68,7 +71,7 @@ export const errorHandler = (
   return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
     ...baseErrorResponse,
     message: err.message,
-    errorMessages: [{ path: '', message: err.message }],
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    errorMessages: [{ path: "", message: err.message }],
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
   });
 };

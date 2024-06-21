@@ -1,5 +1,4 @@
-// src/interfaces/slot.interface.ts
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 export interface ISlot {
   _id?: mongoose.Types.ObjectId;

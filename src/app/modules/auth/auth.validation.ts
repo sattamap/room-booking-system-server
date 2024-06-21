@@ -1,10 +1,13 @@
-import { z, ZodSchema } from 'zod';
-import { Request, Response, NextFunction } from 'express';
+import { z, ZodSchema } from "zod";
+import { Request, Response, NextFunction } from "express";
 
 export const loginValidationSchema = z.object({
   body: z.object({
-    email: z.string().email({ message: 'Invalid email format' }).nonempty({ message: 'Email is required.' }),
-    password: z.string().nonempty({ message: 'Password is required' }),
+    email: z
+      .string()
+      .email({ message: "Invalid email format" })
+      .nonempty({ message: "Email is required." }),
+    password: z.string().nonempty({ message: "Password is required" }),
   }),
 });
 
@@ -16,10 +19,10 @@ export const validateRequest = (schema: ZodSchema) => {
         body: req.body,
       });
       next();
-    } catch (error:any) {
+    } catch (error: any) {
       res.status(400).json({
         success: false,
-        message: 'Validation Error',
+        message: "Validation Error",
         errors: error.errors,
       });
     }

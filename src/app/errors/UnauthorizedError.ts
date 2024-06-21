@@ -1,10 +1,9 @@
-
-import AppError from './AppError';
+import AppError from "./AppError";
 
 class UnauthorizedError extends AppError {
   constructor(message: string) {
     super(401, message);
-    this.name = 'UnauthorizedError';
+    this.name = "UnauthorizedError";
   }
 }
 

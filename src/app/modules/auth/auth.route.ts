@@ -1,11 +1,11 @@
-import express from 'express';
-import { AuthControllers } from './auth.controller';
-import { AuthValidation, validateRequest } from './auth.validation';
+import express from "express";
+import { AuthControllers } from "./auth.controller";
+import { AuthValidation, validateRequest } from "./auth.validation";
 
 const router = express.Router();
 
 router.post(
-  '/login',
+  "/login",
   validateRequest(AuthValidation.loginValidationSchema),
   AuthControllers.loginUser,
 );

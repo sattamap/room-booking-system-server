@@ -1,17 +1,17 @@
-import { Request, Response, NextFunction } from 'express';
-import { RoomServices } from './room.service';
-import sendResponse from '../../utils/sendResponse';
-import catchAsync from '../../utils/catchAsync';
-import httpStatus from 'http-status';
-import AppError from '../../errors/AppError';
+import { Request, Response, NextFunction } from "express";
+import { RoomServices } from "./room.service";
+import sendResponse from "../../utils/sendResponse";
+import catchAsync from "../../utils/catchAsync";
+import httpStatus from "http-status";
+import AppError from "../../errors/AppError";
 
 const addRoom = catchAsync(async (req: Request, res: Response) => {
   const room = await RoomServices.createRoom(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Room added successfully',
-    data: filterRoomData(room)
+    message: "Room added successfully",
+    data: filterRoomData(room),
   });
 });
 
@@ -20,19 +20,19 @@ const getRoom = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Room retrieved successfully',
-    data: filterRoomData(room)
+    message: "Room retrieved successfully",
+    data: filterRoomData(room),
   });
 });
 
 const getAllRooms = catchAsync(async (req: Request, res: Response) => {
   const rooms = await RoomServices.getAllRooms();
-  const filteredRooms = rooms.map(room => filterRoomData(room));
+  const filteredRooms = rooms.map((room) => filterRoomData(room));
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Rooms retrieved successfully',
-    data: filteredRooms
+    message: "Rooms retrieved successfully",
+    data: filteredRooms,
   });
 });
 
@@ -41,8 +41,8 @@ const updateRoom = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Room updated successfully',
-    data: filterRoomData(room)
+    message: "Room updated successfully",
+    data: filterRoomData(room),
   });
 });
 
@@ -51,24 +51,29 @@ const deleteRoom = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Room deleted successfully',
-    data: filterRoomData(room)
+    message: "Room deleted successfully",
+    data: filterRoomData(room),
   });
 });
 
 // Error handler for handling AppError and other uncaught errors
-const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
+const errorHandler = (
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   if (error instanceof AppError) {
     sendResponse(res, {
       statusCode: error.statusCode,
       success: false,
-      message: error.message
+      message: error.message,
     });
   } else {
     sendResponse(res, {
       statusCode: httpStatus.INTERNAL_SERVER_ERROR,
       success: false,
-      message: 'Internal Server Error'
+      message: "Internal Server Error",
     });
   }
 };
@@ -79,7 +84,7 @@ export const RoomControllers = {
   getAllRooms,
   updateRoom,
   deleteRoom,
-  errorHandler // Include the errorHandler in RoomControllers
+  errorHandler, // Include the errorHandler in RoomControllers
 };
 
 // Helper function to filter room data
@@ -92,6 +97,6 @@ const filterRoomData = (room: any) => {
     capacity: room.capacity,
     pricePerSlot: room.pricePerSlot,
     amenities: room.amenities,
-    isDeleted: room.isDeleted
+    isDeleted: room.isDeleted,
   };
 };

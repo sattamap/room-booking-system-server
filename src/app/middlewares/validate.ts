@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
-import httpStatus from 'http-status';
-import AppError from '../errors/AppError';
+import { NextFunction, Request, Response } from "express";
+import { AnyZodObject, ZodError } from "zod";
+import httpStatus from "http-status";
+import AppError from "../errors/AppError";
 
 const validate = (schema: AnyZodObject) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -15,10 +15,17 @@ const validate = (schema: AnyZodObject) => {
       next();
     } catch (error: unknown) {
       if (error instanceof ZodError) {
-        const formattedErrors = error.errors.map((err) => err.message).join(', ');
-        next(new AppError(httpStatus.BAD_REQUEST, `Validation Error: ${formattedErrors}`));
+        const formattedErrors = error.errors
+          .map((err) => err.message)
+          .join(", ");
+        next(
+          new AppError(
+            httpStatus.BAD_REQUEST,
+            `Validation Error: ${formattedErrors}`,
+          ),
+        );
       } else {
-        next(new AppError(httpStatus.BAD_REQUEST, 'Validation failed'));
+        next(new AppError(httpStatus.BAD_REQUEST, "Validation failed"));
       }
     }
   };

@@ -1,12 +1,10 @@
-
-
-import UserModel from './user.model';
-import { IUser } from './user.interface';
-import { MongoServerError } from 'mongodb';
-import DuplicateEntryError from '../../errors/DuplicateEntryError';
-import ValidationError from '../../errors/ValidationError';
-import CastError from '../../errors/CastError';
-import mongoose from 'mongoose';
+import UserModel from "./user.model";
+import { IUser } from "./user.interface";
+import { MongoServerError } from "mongodb";
+import DuplicateEntryError from "../../errors/DuplicateEntryError";
+import ValidationError from "../../errors/ValidationError";
+import CastError from "../../errors/CastError";
+import mongoose from "mongoose";
 
 export const createUser = async (user: IUser) => {
   try {
