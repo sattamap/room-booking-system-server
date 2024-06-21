@@ -20,19 +20,19 @@ This project implements a backend web application for managing room reservations
   - `zod`: ^3.23.8
 
 - **Development Dependencies:**
-  - "@eslint/js": "^9.4.0",
-  - "@types/bcrypt": "^5.0.2",
-  - "@types/cors": "^2.8.17",
-  - "@types/eslint__js": "^8.42.3",
-  - "@types/express": "^4.17.21",
-  - "@types/jsonwebtoken": "^9.0.6",
-  - "@types/mongoose": "^5.11.97",
-  - "@typescript-eslint/eslint-plugin": "^7.13.0",
-  - "@typescript-eslint/parser": "^7.13.0",
-  - "eslint": "^8.57.0",
-  - "prettier": "^3.3.2",
-  - "typescript": "^5.4.5",
-  - "typescript-eslint": "^7.13.0"
+  - `@eslint/js`: "^9.4.0",
+  - `@types/bcrypt`: "^5.0.2",
+  - `@types/cors`: "^2.8.17",
+  - `@types/eslint__js`: "^8.42.3",
+  - `@types/express`: "^4.17.21",
+  - `@types/jsonwebtoken`: "^9.0.6",
+  - `@types/mongoose`: "^5.11.97",
+  - `@typescript-eslint/eslint-plugin`: "^7.13.0",
+  - `@typescript-eslint/parser`: "^7.13.0",
+  - `eslint`: "^8.57.0",
+  - `prettier`: "^3.3.2",
+  - `typescript`: "^5.4.5",
+  - `typescript-eslint`: "^7.13.0"
 ## Setup Instructions
 ### Clone the Repository
 
