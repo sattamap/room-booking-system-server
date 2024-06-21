@@ -5,9 +5,9 @@ import { roomRoutes } from './app/modules/room/room.route';
 import { slotRoutes } from './app/modules/slot/slot.route';
 import { authRoutes } from './app/modules/auth/auth.route';
 import { bookingRoutes } from './app/modules/booking/booking.router';
-
 import notFound from './app/middlewares/notFound';
 import { errorHandler } from './app/middlewares/errorHandler';
+import router from './app/routes';
 
 
 
@@ -18,19 +18,9 @@ app.use(express.json());
 app.use(cors());
 
 
-// Register routes
-app.use('/api/auth', userRoutes);
 
-//  room routes
-app.use('/api', roomRoutes);
-
-// slot routes
-app.use('/api', slotRoutes);
-// Routes
-app.use('/api/auth', authRoutes);
-//booking routes
-app.use('/api', bookingRoutes);
-
+//  app routes
+app.use('/api', router);
 
 
 
